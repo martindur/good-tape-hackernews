@@ -1,4 +1,8 @@
 <script>
+  import userIcon from "./assets/user.svg";
+  import clockIcon from "./assets/clock.svg";
+  import starIcon from "./assets/star.svg";
+
   const NEWSHACKER_API_URL = "https://hacker-news.firebaseio.com/v0";
   const TOP_STORIES_URL = `${NEWSHACKER_API_URL}/topstories.json`;
   const STORY_URL = `${NEWSHACKER_API_URL}/item/`;
@@ -46,8 +50,31 @@
       Loading stories..
     {:then stories}
       {#each stories as story}
-        <div class="flex border rounded-lg p-2 shadow-md">
-          <p>{story.by}</p>
+        <div class="flex border rounded-lg p-2 pr-3 shadow-md w-full">
+          <div class="flex gap-2">
+            <img src={userIcon} alt="user" class="w-10 h-10 text-slate-400" />
+            <div class="flex flex-col gap-4">
+              <div class="flex gap-2 pt-2">
+                <p>{story.by}</p>
+                <p>·</p>
+                <p class="text-gray-600">
+                  <span class="font-semibold">{story.karma}</span>
+                  karma
+                </p>
+              </div>
+              <h1 class="font-lg">{story.title}</h1>
+              <div class="flex justify-between text-slate-400">
+                <div class="flex gap-1">
+                  <img src={clockIcon} class="w-6 h-6" alt="clock" />
+                  <p>2 hours ago</p>
+                </div>
+                <div class="flex gap-1">
+                  <img src={starIcon} class="w-6 h-6" alt="star" />
+                  <p>score: {story.score}</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       {/each}
     {/await}
