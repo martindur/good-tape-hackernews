@@ -1,5 +1,7 @@
 # HackerNews App
 
+![app preview](good-tape-hackernews.png?raw=true)
+
 ## Dependencies
 
 `nodejs`
