@@ -12,6 +12,7 @@
 Run these commands
 
 ```bash
+npm install
 npm run build
 npm run preview
 ```
