@@ -1,82 +1,61 @@
 <script>
-  import userIcon from "./assets/user.svg";
-  import clockIcon from "./assets/clock.svg";
-  import starIcon from "./assets/star.svg";
-
-  const NEWSHACKER_API_URL = "https://hacker-news.firebaseio.com/v0";
-  const TOP_STORIES_URL = `${NEWSHACKER_API_URL}/topstories.json`;
-  const STORY_URL = `${NEWSHACKER_API_URL}/item/`;
-  const USER_URL = `${NEWSHACKER_API_URL}/user/`;
-
-  let stories = [];
-
-  function generateStoryUrl(id) {
-    return `${STORY_URL}${id}.json`;
-  }
-
-  function generateUserUrl(id) {
-    return `${USER_URL}${id}.json`;
-  }
-
-  function randomSelection(count, max) {
-    return [...new Array(count)].map(() => Math.floor(Math.random() * max));
-  }
-
-  async function fetchStories() {
-    const response = await fetch(TOP_STORIES_URL);
-    const data = await response.json();
-
-    const indices = randomSelection(10, data.length);
-    const selection = indices.map((i) => data[i]);
-
-    stories = selection.map(async (id) => {
-      const storyResponse = await fetch(generateStoryUrl(id));
-      const storyData = await storyResponse.json();
-
-      const authorResponse = await fetch(generateUserUrl(storyData.by));
-      const { karma } = await authorResponse.json();
-
-      return { ...storyData, karma };
-    });
-
-    return Promise.all(stories);
-  }
+  import { fetchStories } from "./lib/hackernews_api";
+  import { sortStoriesByScore, timestampToPrettyFormat } from "./lib/util";
 </script>
 
-<main class="p-2">
-  <h1 class="text-2xl">HackerNews</h1>
-  <div class="flex flex-col gap-2">
-    {#await fetchStories()}
-      Loading stories..
-    {:then stories}
-      {#each stories as story}
-        <div class="flex border rounded-lg p-2 pr-3 shadow-md w-full">
-          <div class="flex gap-2">
-            <img src={userIcon} alt="user" class="w-10 h-10 text-slate-400" />
-            <div class="flex flex-col gap-4">
-              <div class="flex gap-2 pt-2">
+<main class="antialiased max-w-screen-lg mx-auto bg-white">
+  <div
+    class="sticky top-0 z-50 bg-white flex flex-col pt-4 pb-8 px-2 shadow h-[10dvh]"
+  >
+    <h1 class="text-2xl">HackerNews</h1>
+    <h2
+      class="text-lg text-end px-2 rounded text-white font-semibold bg-orange-400 tracking-wide"
+    >
+      10 top stories
+    </h2>
+  </div>
+  {#await fetchStories()}
+    <div class="flex flex-col gap-4 md:gap-6 py-4 p-2 shadow-inner h-[90dvh]">
+      <div class="w-full flex items-center justify-center bg-white h-full">
+        <span class="icon-spinner text-orange-400 w-24 h-24" />
+      </div>
+    </div>
+  {:then stories}
+    <div class="flex flex-col gap-4 md:gap-6 py-4 p-2 shadow-inner">
+      {#each sortStoriesByScore(stories) as story}
+        <div class="flex border rounded-xl p-2 pr-4 md:p-4 md:pr-6 shadow-md">
+          <div class="flex gap-2 w-full">
+            <span class="icon-user shrink-0 w-8 h-8 text-slate-400" />
+            <div class="flex flex-col gap-7 md:gap-8 w-full">
+              <div class="flex gap-2 pt-1.5 text-sm">
                 <p>{story.by}</p>
                 <p>·</p>
-                <p class="text-gray-600">
+                <p class="text-orange-300">
                   <span class="font-semibold">{story.karma}</span>
                   karma
                 </p>
               </div>
-              <h1 class="font-lg">{story.title}</h1>
-              <div class="flex justify-between text-slate-400">
-                <div class="flex gap-1">
-                  <img src={clockIcon} class="w-6 h-6" alt="clock" />
-                  <p>2 hours ago</p>
+              <a href={story.url} target="_blank">
+                <h1 class="text-lg md:text-xl font-semibold text-slate-800">
+                  {story.title}
+                </h1>
+              </a>
+              <div class="flex justify-between text-slate-400 text-sm">
+                <div class="flex gap-1 items-center">
+                  <span class="icon-clock w-6 h-6" />
+                  <p>{timestampToPrettyFormat(story.time)}</p>
                 </div>
-                <div class="flex gap-1">
-                  <img src={starIcon} class="w-6 h-6" alt="star" />
-                  <p>score: {story.score}</p>
+                <div class="flex gap-1 items-center text-orange-400">
+                  <span class="icon-star w-6 h-6" />
+                  <p class="font-semibold flex items-center">
+                    {story.score}
+                  </p>
                 </div>
               </div>
             </div>
           </div>
         </div>
       {/each}
-    {/await}
-  </div>
+    </div>
+  {/await}
 </main>
