@@ -1,5 +1,12 @@
+function shuffle(array) {
+  return array
+    .map((value) => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value);
+}
+
 export function randomSelection(count, max) {
-  return [...new Array(count)].map(() => Math.floor(Math.random() * max));
+  return shuffle([...Array(max).keys()]).slice(0, count);
 }
 
 export function sortStoriesByScore(stories) {
