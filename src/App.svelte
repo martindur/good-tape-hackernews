@@ -60,7 +60,7 @@
                     <p>{timestampToPrettyFormat(story.time)}</p>
                   </div>
                   <div class="flex gap-1 items-center text-orange-400">
-                    <span class="icon-star w-6 h-6" />
+                    <span class="icon-fire w-6 h-6" />
                     <p class="font-semibold flex items-center">
                       {story.score}
                     </p>
