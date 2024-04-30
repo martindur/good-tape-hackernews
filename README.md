@@ -1,5 +1,15 @@
 # HackerNews App
 
+## About
+
+This is a web app built using Svelte and TailwindCSS, built with Vite.
+
+It's effectively an SPA that consumes data from the HackerNews API on load.
+All styling is done via TailwindCSS.
+Icons in `src/assets/icons` are converted to css in `tailwind.config.js` making it possible to use classes, e.g. `icon-user` for UI icons.
+
+The app should look like this when running:
+
 ![app preview](good-tape-hackernews.png?raw=true)
 
 ## Dependencies
